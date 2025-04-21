@@ -1,0 +1,114 @@
+-- Database: support_system
+CREATE DATABASE IF NOT EXISTS support_system;
+USE support_system;
+
+-- Tables
+CREATE TABLE Roles  (
+    role_id CHAR(36) PRIMARY KEY DEFAULT (UUID()) NOT NULL, -- PK
+    role_name CHAR(36) NOT NULL,
+    role_description TEXT,
+    created_at DATETIME NOT NULL, 
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE Users (
+    user_id CHAR(36) PRIMARY KEY DEFAULT (UUID()) NOT NULL, -- PK
+    supervisor_id CHAR(36), -- FK
+    role_id CHAR(36) NOT NULL, -- FK
+    username VARCHAR(50) UNIQUE,
+    password_hash VARCHAR(255),
+    email VARCHAR(100) UNIQUE NOT NULL,
+    first_name VARCHAR(36) NOT NULL,
+    last_name VARCHAR(36) NOT NULL,
+    phone_number VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    max_tickets INT DEFAULT 7,
+    current_tickets INT DEFAULT 0,
+    hiring_date DATETIME NOT NULL, 
+    contract_type ENUM('Full-Time','Part-Time', 'Contract'),
+    FOREIGN KEY (role_id) REFERENCES Roles(role_id),
+    FOREIGN KEY (supervisor_id) REFERENCES Users(user_id)
+);
+
+CREATE TABLE Products (
+    product_id CHAR(36) PRIMARY KEY DEFAULT (UUID()) NOT NULL, -- PK
+    product_name VARCHAR(36) NOT NULL,
+    product_description TEXT,
+    weight_product INT NOT NULL, 
+    warranty_months INT NOT NULL,
+    purchase_link VARCHAR(256),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE Status (
+    status_id CHAR(36) PRIMARY KEY DEFAULT (UUID()) NOT NULL, -- PK
+    status_name VARCHAR(50) NOT NULL,
+    status_description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE Category (
+    category_id CHAR(36) PRIMARY KEY DEFAULT (UUID()) NOT NULL,  -- PK
+    category_name VARCHAR(50) NOT NULL,
+    category_description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE Ticket (
+    ticket_id CHAR(36) PRIMARY KEY DEFAULT (UUID()) NOT NULL, -- PK
+    client_id CHAR(36) NOT NULL, -- FK 
+    agent_id CHAR(36) NOT NULL, -- FK 
+    product_id CHAR(36),  -- FK
+    status_id CHAR(36), -- FK
+    category_id CHAR(36) NOT NULL, -- FK
+    is_urgent BOOLEAN DEFAULT FALSE,
+    issue_details TEXT NOT NULL,
+    category_description TEXT,
+    contact_timeframe DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL, 
+    FOREIGN KEY (client_id) REFERENCES Users(user_id),
+    FOREIGN KEY (agent_id) REFERENCES Users(user_id), 
+    FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (status_id) REFERENCES Status(status_id),
+    FOREIGN KEY (category_id) REFERENCES Category(category_id)
+);
+
+CREATE TABLE Payment (
+    payment_id CHAR(36) PRIMARY KEY DEFAULT (UUID()) NOT NULL, -- PK
+    ticket_id CHAR(36),  -- FK
+    product_id CHAR(36), -- FK
+    payment_amount INT NOT NULL,
+    payment_status ENUM('in progress', 'declined', 'successful'),
+    payment_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    payment_type ENUM('PayPal'),
+    FOREIGN KEY (ticket_id) REFERENCES Ticket(ticket_id),
+    FOREIGN KEY (product_id) REFERENCES Products(product_id) 
+);
+
+CREATE TABLE Updates (
+    update_id CHAR(36) PRIMARY KEY DEFAULT (UUID()) NOT NULL, -- PK
+    ticket_id CHAR(36) NOT NULL, 
+    to_supervisor CHAR(36), -- FK 
+    modified_by CHAR(36) NOT NULL, -- FK 
+    product_id CHAR(36),  -- FK
+    status_id CHAR(36), -- FK
+    category_id CHAR(36) NOT NULL, -- FK
+    is_status_changed BOOLEAN DEFAULT FALSE,
+    is_category_changed BOOLEAN DEFAULT FALSE,
+    is_agent_changed BOOLEAN DEFAULT FALSE,
+    is_product_changed BOOLEAN DEFAULT FALSE, 
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL, 
+    FOREIGN KEY (ticket_id) REFERENCES Ticket(ticket_id),
+    FOREIGN KEY (modified_by) REFERENCES Users(user_id),
+    FOREIGN KEY (to_supervisor) REFERENCES Users(user_id), 
+    FOREIGN KEY (product_id) REFERENCES Products(product_id),
+    FOREIGN KEY (status_id) REFERENCES Status(status_id),
+    FOREIGN KEY (category_id) REFERENCES Category(category_id)
+
+);
