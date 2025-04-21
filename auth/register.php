@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<h2>Regjistrohu si Klient</h2>
+<h2>Register as a client</h2>
 <form method="POST">
     <input type="text" name="first_name" placeholder="Name" required><br>
     <input type="text" name="last_name" placeholder="Last name" required><br>

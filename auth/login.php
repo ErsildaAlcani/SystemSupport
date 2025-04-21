@@ -44,9 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     } else {
-        echo "Kredencialet janë të pasakta.";
+        echo "Username or password not valid";
     }
 } else {
-    echo "Kërkesë e pavlefshme.";
+    echo "Invalid request, role error!";
 }
 ?>

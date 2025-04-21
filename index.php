@@ -6,7 +6,7 @@ session_start();
 <html lang="sq">
 <head>
     <meta charset="UTF-8">
-    <title>Faqja Kryesore</title>
+    <title>Log in page</title>
 </head>
 <body>
 
@@ -18,7 +18,7 @@ session_start();
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" required><br><br>
 
-        <p><a href="auth/forgot_password.php">Keni harruar fjalëkalimin?</a></p>
+        <p><a href="auth/forgot_password.php">Forgot password?</a></p>
 
         <input type="submit" value="Enter">
     </form>
