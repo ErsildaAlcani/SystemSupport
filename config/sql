@@ -26,7 +26,7 @@ CREATE TABLE Users (
     is_active BOOLEAN DEFAULT TRUE,
     max_tickets INT DEFAULT 7,
     current_tickets INT DEFAULT 0,
-    hiring_date DATETIME NOT NULL, 
+    hiring_date DATETIME, 
     contract_type ENUM('Full-Time','Part-Time', 'Contract'),
     FOREIGN KEY (role_id) REFERENCES Roles(role_id),
     FOREIGN KEY (supervisor_id) REFERENCES Users(user_id)
